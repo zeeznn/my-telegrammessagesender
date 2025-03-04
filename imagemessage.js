@@ -27,7 +27,7 @@ document.getElementById('media_form').addEventListener('submit', async function(
         formData.append('media', mediaFiles[i]);
     }
 
-    // Send the form data to the server
+
     try {
         const response = await fetch('/imagemessage', {  // Make sure the path is correct
             method: 'POST',
@@ -37,14 +37,17 @@ document.getElementById('media_form').addEventListener('submit', async function(
             body: formData,
         });
 
+        console.log('Response status:', response.status);  // Log response status
+
         if (response.ok) {
             alert('Message and media sent successfully!');
         } else {
-            const errmsg = await response.json();
-            alert(`Error: ${errmsg || 'Failed to send message to Telegram'}`);
+            const errorText = await response.text();  // Read response text for additional error info
+            alert(`Failed to send message. HTTP status: ${response.status}, Error: ${errorText}`);
         }
     } catch (error) {
-        alert('An error occurred while sending the media.');
+        console.error('Error while sending media:', error);  // Log detailed error info
+        alert('An error occurred while sending the media. Please check the console for details.');
     }
 });
 
