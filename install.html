@@ -38,32 +38,42 @@
       </div>
       <script>
          function showMessage(message, isSuccess) {
-             var messageDiv = document.getElementById("message");
-             messageDiv.innerHTML = message;
-             messageDiv.className = isSuccess ? "alert alert-success" : "alert alert-danger";
+            var messageDiv = document.getElementById("message");
+            messageDiv.innerHTML = message;
+            messageDiv.className = isSuccess ? "alert alert-success" : "alert alert-danger";
          }
 
-         document.getElementById("install").addEventListener("click", function() {
-             var password = document.getElementById("password").value;
-             fetch("/tgInstall", {
-                 method: "POST",
-                 headers: { "Content-Type": "application/json" },
-                 body: JSON.stringify({ password: password })
-             }).then(response => response.json())
-             .then(data => showMessage("Install: " + data.message, true))
-             .catch(error => showMessage("Error: " + error, false));
+         async function handleRequest(url) {
+            var password = document.getElementById("password").value;
+            try {
+               const response = await fetch(url, {
+                     method: "POST",
+                     headers: { "Content-Type": "application/json" },
+                     body: JSON.stringify({ password: password })
+               });
+
+               if (!response.ok) {
+                     throw new Error("Server returned an error: " + response.status);
+               }
+
+               // Ensure response contains JSON
+               const text = await response.text();
+               const data = text ? JSON.parse(text) : { message: "No response from server" };
+
+               showMessage((url.includes("Install") ? "Install: " : "Uninstall: ") + data.message, true);
+            } catch (error) {
+               showMessage("Error: " + error.message, false);
+            }
+         }
+
+         document.getElementById("install").addEventListener("click", function () {
+            handleRequest("/tgInstall");
          });
 
-         document.getElementById("uninstall").addEventListener("click", function() {
-             var password = document.getElementById("password").value;
-             fetch("/tgUninstall", {
-                 method: "POST",
-                 headers: { "Content-Type": "application/json" },
-                 body: JSON.stringify({ password: password })
-             }).then(response => response.json())
-             .then(data => showMessage("Uninstall: " + data.message, true))
-             .catch(error => showMessage("Error: " + error, false));
+         document.getElementById("uninstall").addEventListener("click", function () {
+            handleRequest("/tgUninstall");
          });
+
       </script>
    </body>
 </html>
