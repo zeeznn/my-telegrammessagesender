@@ -2,39 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <title>Send Message & Images</title>
+    <title>Telegram Media Sender</title>
 </head>
 <body class="bg-light">
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-md-3">
-                <h2 class="text-center mt-5">Send Message & Images</h2>
+                <h2 class="text-center mt-5">Send Media to Telegram</h2>
                 <div class="card my-5">
                     <div class="card-body">
-                        <form id="sendForm">
+                        <h6 class="text-center mt-1 mb-3">Enter your message, upload images/videos and send to Telegram</h6>
+                        <form id="media_form" enctype="multipart/form-data" method="post">
                             <div class="form-group">
-                                <label for="password">Authorization (Optional)</label>
-                                <input type="password" class="form-control" id="password" placeholder="Enter password if required">
+                                <label for="message">Text Message</label>
+                                <textarea class="form-control" id="message" name="message" rows="3"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="message">Message</label>
-                                <textarea class="form-control" id="message" rows="3" placeholder="Enter your message"></textarea>
+                                <label for="image">Choose Images</label>
+                                <input type="file" class="form-control" id="image" name="image" multiple accept="image/*">
                             </div>
                             <div class="form-group">
-                                <label for="images">Upload Images</label>
-                                <input type="file" class="form-control-file" id="images" multiple>
+                                <label for="video">Choose Videos</label>
+                                <input type="file" class="form-control" id="video" name="video" multiple accept="video/*">
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Send</button>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary mt-3">Send to Telegram</button>
+                            </div>
                         </form>
-                        <div id="statusMessage" class="text-center mt-3"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="/imagemessage.js"></script>
+    <script src="imagemessage.js"></script>
 </body>
 </html>
