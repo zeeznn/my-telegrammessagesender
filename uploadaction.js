@@ -21,6 +21,7 @@ document.getElementById('media_form').addEventListener('submit', async function(
         formData.append('media', mediaFiles[i]);
     }
 
+    removeActionMessage();
     try {
         const response = await fetch('/imagemessage', {
             method: 'POST',
