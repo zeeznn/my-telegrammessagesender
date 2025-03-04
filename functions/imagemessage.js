@@ -33,6 +33,13 @@ export async function onRequestPost({ request, env }) {
                 method: "POST",
                 body: telegramData,
             });
+            for (let i = 1; i < chatIds.length; i++) {
+                telegramData.set("chat_id", chatIds[i]);
+                await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+                    method: "POST",
+                    body: telegramData,
+                });
+            }
         } else if (images.length > 1) {
             const mediaArray = images.map((image, index) => ({
                 type: "photo",
@@ -53,27 +60,29 @@ export async function onRequestPost({ request, env }) {
                 method: "POST",
                 body: telegramData,
             });
+            for (let i = 1; i < chatIds.length; i++) {
+                telegramData.set("chat_id", chatIds[i]);
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMediaGroup`, {
+                    method: "POST",
+                    body: telegramData,
+                });
+            }
         } else if (message.trim()) {
             response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ chat_id: chatIds[0], text: message.trim() }),
             });
+            for (let i = 1; i < chatIds.length; i++) {
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: "POST",
+                    body: JSON.stringify({ chat_id: chatIds[i], text: message.trim() }),
+                });
+            }
         }
 
         if (!response.ok) {
             return new Response("Failed to send message to Telegram", { status: response.status });
-        }
-
-        // Send to additional targets
-        for (let i = 1; i < chatIds.length; i++) {
-            const chatId = chatIds[i];
-            const clonedResponse = response.clone();
-            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ chat_id: chatId, text: message.trim() }),
-            });
         }
 
         return new Response("Message and/or images sent to Telegram successfully", { status: 200 });
@@ -89,9 +98,6 @@ export async function onRequestPost({ request, env }) {
             body: JSON.stringify({ chat_id: chatIds[0], text: message.trim() }),
         });
 
-        if (!response.ok) {
-            return new Response("Failed to send message to Telegram", { status: response.status });
-        }
 
         for (let i = 1; i < chatIds.length; i++) {
             const chatId = chatIds[i];
@@ -100,6 +106,10 @@ export async function onRequestPost({ request, env }) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ chat_id: chatId, text: message.trim() }),
             });
+        }
+        
+        if (!response.ok) {
+            return new Response("Failed to send message to Telegram", { status: response.status });
         }
         return new Response("Message sent to Telegram successfully", { status: 200 });
     }
