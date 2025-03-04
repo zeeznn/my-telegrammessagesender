@@ -10,6 +10,11 @@ document.getElementById('media_form').addEventListener('submit', async function(
     console.log("Message entered:", message); // Log message
     console.log("Media files selected:", mediaFiles.length); // Log number of files selected
 
+    if (!password) {
+        alert("Password is required.");
+        return; // Don't proceed if no password is provided
+    }
+
     if (message) {
         formData.append('message', message);  // Add message if present
     }
@@ -26,6 +31,9 @@ document.getElementById('media_form').addEventListener('submit', async function(
     try {
         const response = await fetch('/imagemessage', {  // Make sure the path is correct
             method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${password}`  // Include password as Bearer token in Authorization header
+            },
             body: formData,
         });
 
