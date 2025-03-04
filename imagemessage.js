@@ -48,6 +48,14 @@ document.getElementById('media_form').addEventListener('submit', async function(
     }
 });
 
+document.getElementById('media').addEventListener('change', function() {
+    const clearButton = document.getElementById('clear_button');
+    if (this.files.length > 0) {
+        clearButton.style.display = 'inline-block'; // Show the "Clear" button
+    } else {
+        clearButton.style.display = 'none'; // Hide the "Clear" button if no files selected
+    }
+});
 
 document.getElementById('clear_button').addEventListener('click', function() {
     // Reset the file input and the message textarea
