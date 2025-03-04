@@ -37,11 +37,11 @@ document.getElementById('media_form').addEventListener('submit', async function(
             body: formData,
         });
 
-        const result = await response.json();
         if (response.ok) {
             alert('Message and media sent successfully!');
         } else {
-            alert(`Error: ${result.error || 'Failed to send message to Telegram'}`);
+            const errmsg = await response.json();
+            alert(`Error: ${errmsg || 'Failed to send message to Telegram'}`);
         }
     } catch (error) {
         alert('An error occurred while sending the media.');
