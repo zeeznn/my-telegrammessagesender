@@ -47,3 +47,11 @@ document.getElementById('media_form').addEventListener('submit', async function(
         alert('An error occurred while sending the media.');
     }
 });
+
+
+document.getElementById('clear_button').addEventListener('click', function() {
+    // Reset the file input and the message textarea
+    document.getElementById('media').value = ''; // Clear selected files
+    document.getElementById('message').value = ''; // Clear message
+    this.style.display = 'none'; // Hide the "Clear" button again
+});
