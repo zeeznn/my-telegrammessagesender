@@ -16,11 +16,22 @@ export async function onRequestPost({ request, env }) {
         const images = formData.getAll("image");
         const videos = formData.getAll("video");
 
+        console.log("Received message:", message); // Log the received message
+        console.log("Number of images received:", images.length); // Log number of images
+        console.log("Number of videos received:", videos.length); // Log number of videos
+
+        // Log details of each received file
+        images.forEach((image, index) => {
+            console.log(`Image ${index + 1}:`, image.name, `(${image.size} bytes)`);
+        });
+
+        videos.forEach((video, index) => {
+            console.log(`Video ${index + 1}:`, video.name, `(${video.size} bytes)`);
+        });
+
         if (!message.trim() && images.length === 0 && videos.length === 0) {
             return new Response("Error: Either a message or at least one media file is required", { status: 400 });
         }
-
-        console.log("Received message:", message);
 
         let response;
         const mediaArray = [];
