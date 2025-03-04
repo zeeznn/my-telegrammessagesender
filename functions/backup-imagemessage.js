@@ -1,3 +1,4 @@
+// send images perfect;
 export async function onRequestPost({ request, env }) {
     const authHeader = request.headers.get("Authorization");
     const expectedPassword = env.TGMSGTOKEN; // Retrieve password from environment variable
@@ -14,45 +15,45 @@ export async function onRequestPost({ request, env }) {
         const formData = await request.formData();
         const message = formData.get("message") || "";
         const images = formData.getAll("image");
-        const videos = formData.getAll("video");
         
-        if (!message.trim() && images.length === 0 && videos.length === 0) {
-            return new Response("Error: Either a message or at least one media file is required", { status: 400 });
+        if (!message.trim() && images.length === 0) {
+            return new Response("Error: Either a message or at least one image is required", { status: 400 });
         }
 
         console.log("Received message:", message);
 
         let response;
-        const mediaArray = [];
-        
-        images.forEach((image, index) => {
-            mediaArray.push({
-                type: "photo",
-                media: `attach://image${index}`
-            });
-        });
-        
-        videos.forEach((video, index) => {
-            mediaArray.push({
-                type: "video",
-                media: `attach://video${index}`
-            });
-        });
-        
-        if (mediaArray.length > 0) {
+        if (images.length === 1) {
+            const telegramData = new FormData();
+            telegramData.append("photo", images[0], images[0].name);
             if (message.trim()) {
-                mediaArray[0].caption = message.trim(); // Add caption to the first media file
+                telegramData.append("caption", message.trim());
+            }
+            telegramData.set("chat_id", chatIds[0]);
+            response = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+                method: "POST",
+                body: telegramData,
+            });
+            for (let i = 1; i < chatIds.length; i++) {
+                telegramData.set("chat_id", chatIds[i]);
+                await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+                    method: "POST",
+                    body: telegramData,
+                });
+            }
+        } else if (images.length > 1) {
+            const mediaArray = images.map((image, index) => ({
+                type: "photo",
+                media: `attach://photo${index}`
+            }));
+            if (message.trim()) {
+                mediaArray[0].caption = message.trim(); // Add caption to the first image
             }
             
             const telegramData = new FormData();
             telegramData.append("media", JSON.stringify(mediaArray));
-            
             images.forEach((image, index) => {
-                telegramData.append(`image${index}`, image, image.name);
-            });
-            
-            videos.forEach((video, index) => {
-                telegramData.append(`video${index}`, video, video.name);
+                telegramData.append(`photo${index}`, image, image.name);
             });
             
             telegramData.set("chat_id", chatIds[0]);
@@ -60,7 +61,6 @@ export async function onRequestPost({ request, env }) {
                 method: "POST",
                 body: telegramData,
             });
-
             for (let i = 1; i < chatIds.length; i++) {
                 telegramData.set("chat_id", chatIds[i]);
                 await fetch(`https://api.telegram.org/bot${botToken}/sendMediaGroup`, {
@@ -86,7 +86,7 @@ export async function onRequestPost({ request, env }) {
             return new Response("Failed to send message to Telegram", { status: response.status });
         }
 
-        return new Response("Message and/or media sent to Telegram successfully", { status: 200 });
+        return new Response("Message and/or images sent to Telegram successfully", { status: 200 });
     } else {
         const message = await request.text();
         if (!message.trim()) {
@@ -98,6 +98,7 @@ export async function onRequestPost({ request, env }) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ chat_id: chatIds[0], text: message.trim() }),
         });
+
 
         for (let i = 1; i < chatIds.length; i++) {
             const chatId = chatIds[i];
