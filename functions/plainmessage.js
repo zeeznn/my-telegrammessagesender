@@ -29,6 +29,8 @@ async function sendPlainText (env, text) {
             text
           }))).json()
     }
+
+    return ret1;
   }
 
   function apiUrl (env, methodName, params = null) {
