@@ -22,11 +22,9 @@ export async function onRequestPost({ request, env }) {
         const botToken = env.TGBOTTOKEN;
         const chatId = env.TGSENDERTARGET;
 
-        // Create form data for Telegram request
-        const telegramData = new FormData();
-        telegramData.append("chat_id", chatId);
-
         if (images.length === 1) {
+            const telegramData = new FormData();
+            telegramData.append("chat_id", chatId);
             telegramData.append("photo", images[0], images[0].name);
             if (message.trim()) {
                 telegramData.append("caption", message.trim());
@@ -36,12 +34,17 @@ export async function onRequestPost({ request, env }) {
                 body: telegramData,
             });
         } else if (images.length > 1) {
-            telegramData.append("media", JSON.stringify(
-                images.map((image, index) => ({
-                    type: "photo",
-                    media: `attach://photo${index}`,
-                }))
-            ));
+            const mediaArray = images.map((image, index) => ({
+                type: "photo",
+                media: `attach://photo${index}`
+            }));
+            if (message.trim()) {
+                mediaArray[0].caption = message.trim(); // Add caption to the first image
+            }
+            
+            const telegramData = new FormData();
+            telegramData.append("chat_id", chatId);
+            telegramData.append("media", JSON.stringify(mediaArray));
             images.forEach((image, index) => {
                 telegramData.append(`photo${index}`, image, image.name);
             });
@@ -64,8 +67,8 @@ export async function onRequestPost({ request, env }) {
             return new Response("Error: Message cannot be empty", { status: 400 });
         }
         console.log("Received message:", message);
-        const botToken = env.TELEGRAM_BOT_TOKEN;
-        const chatId = env.TELEGRAM_CHAT_ID;
+        const botToken = env.TGBOTTOKEN;
+        const chatId = env.TGSENDERTARGET;
         await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
