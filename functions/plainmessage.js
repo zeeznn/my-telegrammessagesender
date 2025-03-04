@@ -1,11 +1,8 @@
 export async function onRequestPost({ request, env }) {
     const authHeader = request.headers.get("Authorization");
-    const expectedPassword = env.TGMSGTOKEN; // Retrieve password from environment variable
+    const expectedPassword = env.TGMSGTOKEN;
 
-    console.log("Received Authorization header:", authHeader);
-    console.log("Expected password:", expectedPassword);
-
-    if (!authHeader || authHeader !== `Bearer ${expectedPassword}`) {
+    if (expectedPassword && (!authHeader || authHeader !== `Bearer ${expectedPassword}`)) {
         return new Response("Unauthorized", { status: 401 });
     }
     
@@ -13,8 +10,24 @@ export async function onRequestPost({ request, env }) {
     if (!message.trim()) {
         return new Response("Error: Message cannot be empty", { status: 400 });
     }
-    
-    console.log("Received message:", message);
-    
-    return new Response("Message received successfully", { status: 200 });
+
+    const r = await sendPlainText(env, message.trim())
+
+    return new Response('ok' in r && r.ok ? 'Ok' : JSON.stringify(r, null, 2))
 }
+
+
+async function sendPlainText (env, text) {
+    return (await fetch(apiUrl(env, 'sendMessage', {
+      chat_id: env.TGSENDERTARGET,
+      text
+    }))).json()
+  }
+
+  function apiUrl (env, methodName, params = null) {
+    let query = ''
+    if (params) {
+      query = '?' + new URLSearchParams(params).toString()
+    }
+    return `https://api.telegram.org/bot${env.TGBOTTOKEN}/${methodName}${query}`
+  }
