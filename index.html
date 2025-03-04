@@ -13,20 +13,24 @@
                 <h2 class="text-center mt-5">Send Media to Telegram</h2>
                 <div class="card my-5">
                     <div class="card-body">
-                        <h6 class="text-center mt-1 mb-3">Enter your message, upload images/videos and send to Telegram</h6>
+                        <h6 class="text-center mt-1 mb-3">Enter your password, message, upload images/videos and send to Telegram</h6>
                         <form id="media_form" enctype="multipart/form-data" method="post">
+                            <!-- Password Field for Authorization -->
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <!-- Message Field -->
                             <div class="form-group">
                                 <label for="message">Text Message</label>
                                 <textarea class="form-control" id="message" name="message" rows="3"></textarea>
                             </div>
+                            <!-- Combined File Input for both Images and Videos -->
                             <div class="form-group">
-                                <label for="image">Choose Images</label>
-                                <input type="file" class="form-control" id="image" name="image" multiple accept="image/*">
+                                <label for="media">Choose Images/Videos</label>
+                                <input type="file" class="form-control" id="media" name="media" multiple accept="image/*,video/*">
                             </div>
-                            <div class="form-group">
-                                <label for="video">Choose Videos</label>
-                                <input type="file" class="form-control" id="video" name="video" multiple accept="video/*">
-                            </div>
+                            <!-- Submit Button -->
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary mt-3">Send to Telegram</button>
                             </div>

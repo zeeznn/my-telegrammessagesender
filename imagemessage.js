@@ -3,27 +3,23 @@ document.getElementById('media_form').addEventListener('submit', async function(
 
     const formData = new FormData();
     const message = document.getElementById('message').value.trim();
-    const images = document.getElementById('image').files;
-    const videos = document.getElementById('video').files;
+    const password = document.getElementById('password').value.trim(); // Get the password entered by the user
+    const mediaFiles = document.getElementById('media').files; // Get the selected files (images & videos)
 
+    console.log("Password entered:", password); // Log the password (for debugging only, don't log in production!)
     console.log("Message entered:", message); // Log message
-    console.log("Images selected:", images.length); // Log number of images selected
-    console.log("Videos selected:", videos.length); // Log number of videos selected
+    console.log("Media files selected:", mediaFiles.length); // Log number of files selected
 
     if (message) {
         formData.append('message', message);  // Add message if present
     }
+    
+    formData.append('password', password);  // Add the password to the formData
 
-    // Log the details of each image file
-    for (let i = 0; i < images.length; i++) {
-        console.log(`Image ${i + 1}:`, images[i].name, `(${images[i].size} bytes)`); // Log file name and size
-        formData.append('image', images[i]);
-    }
-
-    // Log the details of each video file
-    for (let i = 0; i < videos.length; i++) {
-        console.log(`Video ${i + 1}:`, videos[i].name, `(${videos[i].size} bytes)`); // Log file name and size
-        formData.append('video', videos[i]);
+    // Log the details of each media file (image or video)
+    for (let i = 0; i < mediaFiles.length; i++) {
+        console.log(`File ${i + 1}:`, mediaFiles[i].name, `(${mediaFiles[i].size} bytes, Type: ${mediaFiles[i].type})`); // Log file name, size, and type
+        formData.append('media', mediaFiles[i]);
     }
 
     // Send the form data to the server
