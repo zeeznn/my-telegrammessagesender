@@ -24,7 +24,7 @@ document.getElementById('media_form').addEventListener('submit', async function(
 
     // Send the form data to the server
     try {
-        const response = await fetch('/your-server-path', {  // Make sure the path is correct
+        const response = await fetch('/imagemessage', {  // Make sure the path is correct
             method: 'POST',
             body: formData,
         });
