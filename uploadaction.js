@@ -48,6 +48,12 @@ function displayActionMessage(message, type) {
     actionMessageDiv.classList.add(`alert-${type}`);
     actionMessageDiv.style.display = 'block';
 }
+function removeActionMessage() {
+    const actionMessageDiv = document.getElementById('action_message');
+    actionMessageDiv.innerHTML = "";
+    actionMessageDiv.classList.remove('alert-info', 'alert-success', 'alert-danger');
+    actionMessageDiv.style.display = 'none';
+}
 
 document.getElementById('media').addEventListener('change', function() {
     const clearButton = document.getElementById('clear_button');
