@@ -18,10 +18,17 @@ export async function onRequestPost({ request, env }) {
 
 
 async function sendPlainText (env, text) {
-    return (await fetch(apiUrl(env, 'sendMessage', {
+    const ret1 = (await fetch(apiUrl(env, 'sendMessage', {
       chat_id: env.TGSENDERTARGET,
       text
     }))).json()
+
+    if (env.TGSENDERTARGET2) {
+        (await fetch(apiUrl(env, 'sendMessage', {
+            chat_id: env.TGSENDERTARGET2,
+            text
+          }))).json()
+    }
   }
 
   function apiUrl (env, methodName, params = null) {
