@@ -17,3 +17,11 @@ async function onRequest (context) {
     const r = await (await fetch(apiUrl('setWebhook', { url: webhookUrl, secret_token: context.env.TGSECRET }))).json()
     return new Response('ok' in r && r.ok ? 'Ok' : JSON.stringify(r, null, 2))
 }
+
+function apiUrl (methodName, params = null) {
+    let query = ''
+    if (params) {
+      query = '?' + new URLSearchParams(params).toString()
+    }
+    return `https://api.telegram.org/bot${c_botTOKEN}/${methodName}${query}`
+  }
