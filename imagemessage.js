@@ -1,4 +1,4 @@
-document.getElementById('media_form').addEventListener('submit', async function(event) {
+document.getElementById('sendForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent the default form submission
 
     const formData = new FormData();
